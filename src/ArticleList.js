@@ -12,7 +12,7 @@ const ArticleList = ({articles}) => {
 }
 
 ArticleList.propTypes = {
-  // test: PropTypes.string
+  articles: PropTypes.array
 }
 
 export default ArticleList
