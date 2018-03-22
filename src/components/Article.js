@@ -12,7 +12,6 @@ class Article extends Component {
       title: PropTypes.string.isRequired,
       comments: PropTypes.array
     }).isRequired,
-    //decorators
     isOpen: PropTypes.bool,
     toggleOpen: PropTypes.func
   }
@@ -30,7 +29,6 @@ class Article extends Component {
 
   setContainerRef= ref =>{
     this.container = ref
-    console.log('---', ref)
   }
 
 
@@ -45,7 +43,7 @@ class Article extends Component {
     )
   }
 
-  setComponentRef= ref =>{
+  setComponentRef = ref =>{
     // console.log('---', findDOMNode(ref))
   }
 }
