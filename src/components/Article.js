@@ -1,53 +1,52 @@
 import React, {Component} from 'react'
+// import {findDOMNode} from 'react-dom'
 import PropTypes from 'prop-types'
-
 import CommentList from './CommentList'
 
 class Article extends Component {
   static propTypes = {
+    // props
     article: PropTypes.shape({
       id: PropTypes.string.isRequired,
       text: PropTypes.string,
       title: PropTypes.string.isRequired,
       comments: PropTypes.array
-    }).isRequired
-  }
-
-  constructor(props) {
-    super(props)
-    this.state = {
-      isOpen: false
-    }
+    }).isRequired,
+    //decorators
+    isOpen: PropTypes.bool,
+    toggleOpen: PropTypes.func
   }
 
   render(){
-    const {article} = this.props
-    const {isOpen} = this.state
+    const {article, isOpen, toggleOpen} = this.props
     return (
-      <div>
+      <div ref={this.setContainerRef}>
         <h3>{article.title}</h3>
-        <button onClick={this.toggleOpen}>{isOpen ? "close":"open"}</button>
+        <button onClick={toggleOpen}>{isOpen ? "close":"open"}</button>
         {this.getBody()}
       </div>
     )
   }
 
+  setContainerRef= ref =>{
+    this.container = ref
+    console.log('---', ref)
+  }
+
+
   getBody(){
-    const {isOpen} = this.state
-    const {article} = this.props
+    const {article, isOpen} = this.props
     if (!isOpen) return null
     return (
       <section>
         {article.text}
-        <CommentList comments={article.comments} />
+        <CommentList comments={article.comments} ref={this.setComponentRef}/>
       </section>
     )
   }
 
-  toggleOpen=()=>{
-    this.setState({
-      isOpen: !this.state.isOpen
-    })
+  setComponentRef= ref =>{
+    // console.log('---', findDOMNode(ref))
   }
 }
 

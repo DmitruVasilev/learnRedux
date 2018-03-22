@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+
 const Comment = ({comment}) => {
   return (
     <p>{comment.text} <b>by {comment.user}</b></p>
