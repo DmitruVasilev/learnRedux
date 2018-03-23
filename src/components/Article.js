@@ -22,7 +22,6 @@ class Article extends Component {
 
   render(){
     const {article, isOpen, toggleOpen} = this.props
-    console.log('---Update', )
     return (
       <div ref={this.setContainerRef}>
         <h3>{article.title}</h3>
