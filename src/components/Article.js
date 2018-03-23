@@ -16,8 +16,13 @@ class Article extends Component {
     toggleOpen: PropTypes.func
   }
 
+  shouldComponentUpdate(nextProps, nextState){
+    return nextProps.isOpen !==this.props.isOpen
+  }
+
   render(){
     const {article, isOpen, toggleOpen} = this.props
+    console.log('---Update', )
     return (
       <div ref={this.setContainerRef}>
         <h3>{article.title}</h3>
