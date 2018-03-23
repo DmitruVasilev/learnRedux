@@ -1,9 +1,11 @@
 import React, {Component} from 'react'
 // import {findDOMNode} from 'react-dom'
 import PropTypes from 'prop-types'
+import {connect} from 'react-redux'
 import CSSTransition from 'react-addons-css-transition-group'
 import './style.css'
 import CommentList from '../CommentList'
+import {deleteArticle} from '../AC'
 
 class Article extends Component {
   static propTypes = {
@@ -28,6 +30,7 @@ class Article extends Component {
       <div ref={this.setContainerRef}>
         <h3>{article.title}</h3>
         <button onClick={toggleOpen}>{isOpen ? "close":"open"}</button>
+        <button onClick={this.handleDelete}>handleDelete</button>
         <CSSTransition
           transitionAppear
           component = "div"
@@ -40,6 +43,11 @@ class Article extends Component {
         </CSSTransition>
       </div>
     )
+  }
+
+  handleDelete= () =>{
+    const {deleteArticle, article} = this.props
+    deleteArticle(article.id)
   }
 
   setContainerRef= ref =>{
@@ -63,4 +71,4 @@ class Article extends Component {
   }
 }
 
-export default Article
+export default connect(null, {deleteArticle})(Article)

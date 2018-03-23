@@ -8,18 +8,15 @@ import Counter from "./Counter"
 
 class App extends Component {
   static propTypes = {
-    articles: PropTypes.array
   }
 
   render() {
-    const {articles} = this.props
-
     return (
       <div>
-        <Filters articles={articles} />
+        <Filters articles={[]} />
         <UserForm />
         <Counter />
-        <ArticleList articles={articles} />
+        <ArticleList />
       </div>
     )
   }
