@@ -5,7 +5,7 @@ import {connect} from 'react-redux'
 import CSSTransition from 'react-addons-css-transition-group'
 import './style.css'
 import CommentList from '../CommentList'
-import {deleteArticle} from '../AC'
+import {deleteArticle} from '../../AC'
 
 class Article extends Component {
   static propTypes = {
