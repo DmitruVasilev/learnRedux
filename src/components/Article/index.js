@@ -3,7 +3,7 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import CSSTransition from 'react-addons-css-transition-group'
 import './style.css'
-import CommentList from './CommentList'
+import CommentList from '../CommentList'
 
 class Article extends Component {
   static propTypes = {
