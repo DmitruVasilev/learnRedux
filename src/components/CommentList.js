@@ -33,7 +33,7 @@ class CommentList extends React.Component{
     if(!comments.length) return <p>No comments yet</p>
     return (
       <ul>
-        {comments.map(comment => <li key={comment.id}><Comment comment={comment} /></li> )}
+        {comments.map(id => <li key={id}><Comment id={id} /></li> )}
       </ul>
     )
   }
