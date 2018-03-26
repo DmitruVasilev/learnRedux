@@ -1,5 +1,6 @@
 import {normalizedComments} from '../fixtures'
-import {} from '../constansts'
+import {ADD_COMMENT} from '../constansts'
+import {ADD_COMMENT} from '../constansts'
 
 const commentsMap = normalizedComments.reduce((acc, comment)=>{
   acc[comment.id] = comment
@@ -7,10 +8,11 @@ const commentsMap = normalizedComments.reduce((acc, comment)=>{
 }, {})
 
 export default (commentsState = commentsMap, action) => {
-  const {type, payload} = action
+  const {type, payload, randomId} = action
 
   switch (type) {
-    // case DELETE_ARTICLE: return articleState.filter(article => article.id !== payload.id)
+    case ADD_COMMENT:
+      return {...commentsState, [randomId]: payload.comment}
   }
   return commentsState
 }
