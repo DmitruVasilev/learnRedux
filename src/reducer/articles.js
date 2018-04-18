@@ -1,29 +1,29 @@
-import {normalizedArticles as defaultArticles} from '../fixtures'
 import {arrToMap} from '../helpers'
 import {DELETE_ARTICLE, ADD_COMMENT, LOAD_ALL_ARTICLES} from '../constants'
+import {Map, Record} from 'immutable'
 
-export default (articleState = {}, action) => {
-    const {type, payload, response, randomId} = action
+const ArticleRecord = Record({
+  text: undefined,
+  title: "",
+  id: undefined,
+  comments: []
+})
 
-    switch (type) {
-        case DELETE_ARTICLE:
-            const tmpState = {...articleState}
-            delete tmpState[payload.id]
-            return tmpState
+const defaultState = new Map({})
 
-        case ADD_COMMENT:
-            const article = articleState[payload.articleId]
-            return {
-                ...articleState,
-                [payload.articleId]: {
-                    ...article,
-                    comments: (article.comments || []).concat(randomId)
-                }
-            }
+export default (articleState = defaultState, action) => {
+  const {type, payload, response, randomId} = action
 
-        case LOAD_ALL_ARTICLES:
-            return arrToMap(response)
-    }
+  switch (type) {
+    case DELETE_ARTICLE:
+      return articleState.delete(payload.id)
 
-    return articleState
+    case ADD_COMMENT:
+      return articleState.updateIn([payload.articleId, "comments"], comments => comments.concat(randomId))
+
+    case LOAD_ALL_ARTICLES:
+      return arrToMap(response, ArticleRecord)
+  }
+
+  return articleState
 }
