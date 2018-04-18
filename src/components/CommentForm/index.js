@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import {addComment} from '../../AC'
 import './style.css'
 
 class CommentForm extends Component {
     static propTypes = {
+        articleId: PropTypes.string.isRequired,
+        addComment: PropTypes.func.isRequired
     };
 
     state = {
@@ -21,7 +24,7 @@ class CommentForm extends Component {
                 comment: <input value = {this.state.text}
                                 onChange = {this.handleChange('text')}
                                 className = {this.getClassName('text')} />
-                <input type = "submit" value = "submit" disabled = {!this.isValidForm()}/>
+                <input type = "submit" value = "submit"/>
             </form>
         )
     }
@@ -35,11 +38,8 @@ class CommentForm extends Component {
         })
     }
 
-    isValidForm = () => ['user', 'text'].every(this.isValidField)
-
-    isValidField = type => this.state[type].length >= limits[type].min
-
-    getClassName = type => this.isValidField(type) ? '' : 'form-input__error'
+    getClassName = type => this.state[type].length && this.state[type].length < limits[type].min
+        ? 'form-input__error' : ''
 
     handleChange = type => ev => {
         const {value} = ev.target
@@ -52,11 +52,11 @@ class CommentForm extends Component {
 
 const limits = {
     user: {
-        min: 10,
-        max: 50
+        min: 5,
+        max: 15
     },
     text: {
-        min: 10,
+        min: 20,
         max: 50
     }
 }
