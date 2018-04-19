@@ -7,7 +7,7 @@ import Filters from './Filters'
 import Counter from './Counter'
 import CommentsPage from './routes/CommentsPage'
 import 'react-select/dist/react-select.css'
-import {BrowserRouter as Router, Route, NavLink, Switch} from 'react-router-dom'
+import {BrowserRouter as Router, Route, NavLink, Switch, Redirect} from 'react-router-dom'
 
 class App extends Component {
     static propTypes = {
@@ -35,7 +35,8 @@ class App extends Component {
                   <Route path="/counter" component={Counter} />
                   <Route path="/filters" component={Filters} />
                   <Route path="/articles" component={Articles} />
-                  <Route path='/comments/:page' component = {CommentsPage} />
+                  <Route path='/comments' component = {CommentsPage} />
+                  {/*<Redirect from="/comments" to="/comments/1" />*/}
                   <Route path="*" component={NotFoundPage} />
                 </Switch>
               </div>
