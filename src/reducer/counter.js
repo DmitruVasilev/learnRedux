@@ -1,11 +1,5 @@
-import {INCREMENT} from '../constants'
+import { INCREMENT } from '../constants'
 
-export default (count = 0, action) => {
-    const {type} = action
-
-    switch (type) {
-        case INCREMENT: return count + 1
-    }
-
-    return count
+export default (counterState = 0, action) => {
+    return action.type === INCREMENT ? counterState + 1 : counterState
 }

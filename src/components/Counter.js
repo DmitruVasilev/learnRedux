@@ -5,25 +5,28 @@ import {increment} from '../AC'
 
 class Counter extends Component {
     static propTypes = {
-        counter: PropTypes.number,
-        increment: PropTypes.func.isRequired
+        count: PropTypes.number
     };
 
     render() {
         return (
             <div>
-                <h2>{this.props.counter}</h2>
-                <button onClick = {this.handleIncrement}>Increment me</button>
+                <h3>
+                    {this.props.count}
+                    <button onClick = {this.handleIncrement}>increment</button>
+                </h3>
             </div>
         )
     }
 
     handleIncrement = () => {
-        const {increment} = this.props
-        increment()
+        const action = increment()
+        this.props.dispatch(action)
     }
 }
 
-export default connect((state) => ({
-    counter: state.count
-}), { increment })(Counter)
+const mapStateToProps = state => ({
+    count: state.counter
+})
+
+export default connect(mapStateToProps)(Counter)

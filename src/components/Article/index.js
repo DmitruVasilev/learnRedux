@@ -1,95 +1,93 @@
-import React, {Component, PureComponent} from 'react'
-import {findDOMNode} from 'react-dom'
-import {connect} from 'react-redux'
+import React, {Component, Fragment} from 'react'
 import PropTypes from 'prop-types'
-import CommentList from '../CommentList'
-import {CSSTransitionGroup} from 'react-transition-group'
-import {deleteArticle, loadArticle} from '../../AC'
-import Loader from '../Loader'
+import CSSTransition from 'react-addons-css-transition-group'
+import { connect } from 'react-redux'
+import CommentList from '../comment-list'
+import Loader from '../common/loader'
+import LocalizedText from '../common/localized-text'
+import { deleteArticle, loadArticleById } from '../../AC'
+import { articleSelector } from '../../selectors'
 import './style.css'
 
-class Article extends PureComponent {
-  static propTypes = {
-    id: PropTypes.string.isRequired,
-    isOpen: PropTypes.bool,
-    toggleOpen: PropTypes.func,
+class Article extends Component {
+    state = {
+        error: null
+    }
 
-    article: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      text: PropTypes.string
-  })
+    componentDidCatch(error) {
+        console.log('---', error)
+        this.setState({ error })
+    }
 
-  }
+    componentDidMount() {
+        const { loadArticleById, article, id } = this.props
+        if (!article || (!article.text && !article.loading)) loadArticleById(id)
+    }
 
-  state = {
-    updateIndex: 0
-  }
+    render() {
+        console.log('---', 'rendering Article')
+        if (this.state.error) return <h2>{this.state.error.message}</h2>
 
-  componentDidMount(){
-    const {loadArticle, article, id} = this.props
-    if(!article || (!article.text && !article.loading)) loadArticle(id)
-  }
+        const { isOpen, article, onButtonClick } = this.props
+        if (!article) return null
 
-  /*
-      shouldComponentUpdate(nextProps, nextState) {
-          return nextProps.isOpen !== this.props.isOpen
-      }
-  */
+        return (
+            <Fragment>
+                <h2>
+                    {article.title}
+                    <button
+                        className = "test__article--button"
+                        onClick={() => onButtonClick(article.id)}
+                    >
+                        <LocalizedText>{isOpen ? 'close' : 'open'}</LocalizedText>
+                    </button>
+                    <button onClick = {this.handleDelete}>
+                        <LocalizedText>delete me</LocalizedText>
+                    </button>
+                </h2>
+                <CSSTransition
+                    transitionName = "article"
+                    transitionAppear
+                    transitionEnterTimeout = {500}
+                    transitionLeaveTimeout = {300}
+                    transitionAppearTimeout = {1000}
+                    component = {Fragment}
+                >
+                    {this.getBody()}
+                </CSSTransition>
+            </Fragment>
+        )
+    }
 
-  render() {
-    const {article, isOpen, toggleOpen} = this.props
-    if(!article) return null
-    return (
-      <div ref={this.setContainerRef}>
-        <h3>{article.title}</h3>
-        <button onClick={toggleOpen}>
-          {isOpen ? 'close' : 'open'}
-        </button>
-        <button onClick={this.handleDelete}>delete me</button>
-        <CSSTransitionGroup
-          transitionName='article'
-          transitionAppear
-          transitionEnterTimeout={300}
-          transitionLeaveTimeout={500}
-          transitionAppearTimeout={500}
-          component='div'
-        >
-          {this.getBody()}
-        </CSSTransitionGroup>
-      </div>
-    )
-  }
+    getBody() {
+        const { article, isOpen } = this.props
+        if (!isOpen) return null
+        if (article.loading) return <Loader/>
 
-  handleDelete = () => {
-    const {deleteArticle, article} = this.props
-    deleteArticle(article.id)
-    console.log('---', 'deleting article')
-  }
+        return (
+            <section className = "test__article--body">
+                {article.text}
+                <CommentList article = {article}/>
+            </section>
+        )
+    }
 
-  setContainerRef = ref => {
-    this.container = ref
-//        console.log('---', ref)
-  }
-
-  getBody() {
-    const {article, isOpen} = this.props
-    if (!isOpen) return null
-    if (article.loading) return <Loader />
-    return (
-      <section>
-        {article.text}
-        <button onClick={() => this.setState({updateIndex: this.state.updateIndex + 1})}>update</button>
-        <CommentList article={article} ref={this.setCommentsRef} key={this.state.updateIndex}/>
-      </section>
-    )
-  }
-
-  setCommentsRef = ref => {
-//        console.log('---', ref)
-  }
+    handleDelete = () => {
+        const { deleteArticle, article } = this.props
+        deleteArticle(article.id)
+    }
 }
 
-export default connect((state, ownProps)=> ({
-  article: state.articles.entities.get(ownProps.id)
-}), {deleteArticle, loadArticle})(Article)
+
+Article.propTypes = {
+    isOpen: PropTypes.bool,
+    article: PropTypes.shape({
+        title: PropTypes.string,
+        text: PropTypes.string
+    }),
+    onButtonClick: PropTypes.func
+}
+
+export default connect((state, props) => ({
+    article: articleSelector(state, props)
+}), { deleteArticle, loadArticleById }, null, { pure: false })(Article)

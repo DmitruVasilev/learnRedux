@@ -1,28 +1,29 @@
-import React, {Component} from 'react'
-import {Route} from 'react-router-dom'
-import ArticleList from '../ArticleList'
-import Article from '../Article'
+import React, { Component } from 'react'
+import { Route } from 'react-router-dom'
+import ArticleList from '../article-list'
+import Article from '../article'
 
-class Articles extends Component {
+class ArticlesRoute extends Component {
+    static propTypes = {
 
-  getArticle=({match})=>{
-    const {id} = match.params
-    return <Article id={id} isOpen key={id} />
-  }
+    };
 
-  getIndex=()=>{
-    return <h2>Please select article</h2>
-  }
+    render() {
+        console.log('---', 'rendering Articles Page')
+        return (
+            <div>
+                <h2>Articles page</h2>
+                <ArticleList />
+                <Route path = {`${this.props.match.path}/:id`} children = {this.getArticle}/>
+            </div>
+        )
+    }
 
-  render() {
-    return (
-      <div>
-        <ArticleList />
-        <Route path="/articles" render={this.getIndex} exact />
-        <Route path="/articles/:id" render={this.getArticle} />
-      </div>
-    )
-  }
+    getArticle = ({ match }) => {
+        if (!match) return <h2>Please select an article</h2>
+
+        return <Article id = {match.params.id} key = {match.params.id} isOpen />
+    }
 }
 
-export default Articles
+export default ArticlesRoute

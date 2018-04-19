@@ -1,8 +1,9 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import Select from 'react-select'
 import { connect } from 'react-redux'
 import { changeSelection } from '../../AC'
-import {mapToArr} from '../../helpers'
+import { articleListSelector } from '../../selectors'
 
 import 'react-select/dist/react-select.css'
 
@@ -23,13 +24,13 @@ class SelectFilter extends Component {
         return <Select
             options={options}
             value={selected}
-            multi={true}
             onChange={this.handleChange}
+            multi
         />
     }
 }
 
 export default connect(state => ({
     selected: state.filters.selected,
-    articles: mapToArr(state.articles.entities)
+    articles: articleListSelector(state)
 }), { changeSelection })(SelectFilter)
