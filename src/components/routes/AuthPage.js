@@ -9,9 +9,6 @@ import Loader from '../common/Loader'
 class AuthPage extends Component {
   static propTypes = {}
 
-  handleSignUp = values => console.log("---", values)
-  handleSignIn = ({emails, password}) => this.props.signUp(emails, password)
-
   render() {
     const {loading} = this.props
     console.log("---", loading)
@@ -26,6 +23,11 @@ class AuthPage extends Component {
       </div>
     )
   }
+
+  handleSignIn = values => console.log("---", values)
+
+  handleSignUp = ({emails, password}) => this.props.signUp(emails, password)
+
 }
 
 export default connect(state => ({
