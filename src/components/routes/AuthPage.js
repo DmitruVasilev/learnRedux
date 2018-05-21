@@ -26,7 +26,7 @@ class AuthPage extends Component {
 
   handleSignIn = values => console.log("---", values)
 
-  handleSignUp = ({emails, password}) => this.props.signUp(emails, password)
+  handleSignUp = ({email, password}) => this.props.signUp(email, password)
 
 }
 
