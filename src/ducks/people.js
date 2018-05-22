@@ -1,5 +1,6 @@
 import {appName} from '../config'
 import {Record, List} from 'immutable'
+import {reset} from 'redux-form'
 import {put, takeEvery, call} from 'redux-saga/effects'
 import {generateId} from './utils'
 
@@ -45,18 +46,8 @@ export const addPersonSaga = function * (action) {
     type: ADD_PERSON,
     payload: {...action.payload, id}
   })
+  yield put(reset('person'))
 }
-
-// export function addPerson(person) {
-//   return (dispatch) => {
-//     dispatch({
-//       type: ADD_PERSON,
-//       payload: {
-//         person: {id: Date.now(), ...person}
-//       }
-//     })
-//   }
-// }
 
 export const saga = function * () {
   yield takeEvery(ADD_PERSON_REQUEST, addPersonSaga)

@@ -3,7 +3,7 @@ import SingInForm from '../auth/SingInForm'
 import SingUpForm from '../auth/SingUpForm'
 import {Route, NavLink} from 'react-router-dom'
 import {connect} from 'react-redux'
-import {signUp, moduleName} from '../../ducks/auth'
+import {signUp, signIn, moduleName} from '../../ducks/auth'
 import Loader from '../common/Loader'
 
 class AuthPage extends Component {
@@ -11,7 +11,6 @@ class AuthPage extends Component {
 
   render() {
     const {loading} = this.props
-    console.log("---", loading)
     return (
       <div>
         <h1>AuthPage</h1>
@@ -24,12 +23,11 @@ class AuthPage extends Component {
     )
   }
 
-  handleSignIn = values => console.log("---", values)
+  handleSignIn = ({email, password}) => this.props.signIn(email, password)
 
   handleSignUp = ({email, password}) => this.props.signUp(email, password)
-
 }
 
 export default connect(state => ({
   loading: state[moduleName].loading
-}), {signUp})(AuthPage)
+}), {signUp, signIn})(AuthPage)
