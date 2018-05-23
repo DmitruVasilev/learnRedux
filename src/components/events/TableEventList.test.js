@@ -3,7 +3,7 @@ import {shallow, mount} from 'enzyme'
 import events from '../../mocks/conferences'
 import {EventRecord} from '../../ducks/events'
 import Loader from '../common/Loader'
-import {EventList} from './EventsList'
+import {EventList} from './TableEventsList'
 
 
 const testEvents = events.map(event => new EventRecord({...event, uid: Math.random().toString()}))
