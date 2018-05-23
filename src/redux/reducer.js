@@ -7,7 +7,7 @@ import eventsReducer, {moduleName as eventsModule} from '../ducks/events'
 
 export default combineReducers({
   router, form,
-  [authModule]: authReducer,
   [eventsModule]: eventsReducer,
+  [authModule]: authReducer,
   [peopleModule]: peopleReducer
 })
