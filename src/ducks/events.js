@@ -1,8 +1,8 @@
-import {all, take, call, put, select} from 'redux-saga/effects'
+import {all, take, call, put, select, takeEvery} from 'redux-saga/effects'
 import {appName} from '../config'
 import {Record, OrderedMap, OrderedSet} from 'immutable'
+import firebase from 'firebase'
 import {createSelector} from 'reselect'
-import firebase from 'firebase/app'
 import {fbDataEntities} from './utils'
 
 /**
@@ -17,6 +17,8 @@ export const FETCH_LAZY_REQUEST = `${prefix}/FETCH_LAZY_REQUEST`
 export const FETCH_LAZY_START = `${prefix}/FETCH_LAZY_START`
 export const FETCH_LAZY_SUCCESS = `${prefix}/FETCH_LAZY_SUCCESS`
 export const SELECT_EVENT = `${prefix}/SELECT_EVENT`
+export const DELETE_EVENT_REQUEST = `${prefix}/DELETE_EVENT_REQUEST`
+export const DELETE_EVENT_SUCCESS = `${prefix}/DELETE_EVENT_SUCCESS`
 
 /**
  * Reducer
@@ -36,14 +38,15 @@ export const EventRecord = Record({
   when: null,
   month: null,
   submissionDeadline: null
+
 })
 
 export default function reducer(state = new ReducerRecord(), action) {
   const {type, payload} = action
 
   switch (type) {
-    case FETCH_LAZY_START:
     case FETCH_ALL_REQUEST:
+    case FETCH_LAZY_START:
       return state.set('loading', true)
 
     case FETCH_ALL_SUCCESS:
@@ -63,6 +66,14 @@ export default function reducer(state = new ReducerRecord(), action) {
         ? state.update('selected', selected => selected.remove(payload.uid))
         : state.update('selected', selected => selected.add(payload.uid))
 
+    case DELETE_EVENT_REQUEST:
+      return state.set('loading', true)
+
+    case DELETE_EVENT_SUCCESS:
+      return state
+        .set('loading', false)
+        .deleteIn(['entities', payload.uid])
+
     default:
       return state
   }
@@ -77,11 +88,12 @@ export const entitiesSelector = createSelector(stateSelector, state => state.ent
 export const eventListSelector = createSelector(entitiesSelector, entities => (
   entities.valueSeq().toArray()
 ))
-
 export const sectionSelector = createSelector(stateSelector, state => state.selected)
 export const selectedEventsSelector = createSelector(entitiesSelector, sectionSelector, (entities, selection) => (
   selection.toArray().map(uid => entities.get(uid))
 ))
+export const idSelector = (state, props) => props.uid
+export const eventSelector = createSelector(entitiesSelector, idSelector, (entities, id) => entities.get(id))
 
 /**
  * Action Creators
@@ -106,18 +118,40 @@ export function fetchLazy() {
   }
 }
 
+export function deleteEvent(uid) {
+  return {
+    type: DELETE_EVENT_REQUEST,
+    payload: {uid}
+  }
+}
+
 /**
  * Sagas
  * */
 
-export const fetchLazySaga = function* () {
+export const fetchAllSaga = function * () {
+  while (true) {
+    yield take(FETCH_ALL_REQUEST)
+
+    const ref = firebase.database().ref('events')
+
+    const data = yield call([ref, ref.once], 'value')
+
+    yield put({
+      type: FETCH_ALL_SUCCESS,
+      payload: data.val()
+    })
+  }
+}
+
+export const fetchLazySaga = function * () {
   while (true) {
     yield take(FETCH_LAZY_REQUEST)
 
     const state = yield select(stateSelector)
 
     if (state.loading || state.loaded) continue
-    //        if (state.loaded) return
+//        if (state.loaded) return
 
     yield put({
       type: FETCH_LAZY_START
@@ -139,24 +173,26 @@ export const fetchLazySaga = function* () {
   }
 }
 
-export const fetchAllSaga = function* () {
-  while (true) {
-    yield take(FETCH_ALL_REQUEST)
+export const deleteEventSaga = function * (action) {
+  const {payload} = action
+  const ref = firebase.database().ref(`events/${payload.uid}`)
 
-    const ref = firebase.database().ref('events')
-
-    const data = yield call([ref, ref.once], 'value')
+  try {
+    yield call([ref, ref.remove])
 
     yield put({
-      type: FETCH_ALL_SUCCESS,
-      payload: data.val()
+      type: DELETE_EVENT_SUCCESS,
+      payload
     })
+  } catch (_) {
+
   }
 }
 
 export function* saga() {
   yield all([
     fetchAllSaga(),
-    fetchLazySaga()
+    fetchLazySaga(),
+    takeEvery(DELETE_EVENT_REQUEST, deleteEventSaga)
   ])
 }
