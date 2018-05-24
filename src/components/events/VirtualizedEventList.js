@@ -64,7 +64,7 @@ export class EventList extends Component {
     this.props.fetchLazy()
   }
 
-  handleRowClick = (rowData) => {
+  handleRowClick = ({rowData}) => {
     const {selectEvent} = this.props
     selectEvent && selectEvent(rowData.uid)
   }
