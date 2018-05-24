@@ -1,13 +1,12 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import {DropTarget} from 'react-dnd'
 import {connect} from 'react-redux'
 import {deleteEvent, stateSelector} from '../../ducks/events'
 import Loader from '../common/Loader'
+import {Motion, spring, presets} from 'react-motion'
 
 class Trash extends Component {
-  static propTypes = {
-
-  };
+  static propTypes = {};
 
   render() {
     const {connectDropTarget, isOver, loading} = this.props
@@ -17,12 +16,22 @@ class Trash extends Component {
       position: 'fixed',
       top: 0, right: 0
     }
-    return connectDropTarget(
-      <div style = {style}>
-        Trash
-        {loading && <Loader/>}
-      </div>
-    )
+    return <Motion
+      defaultStyle={{opacity: 0}}
+      style={{
+        opacity: spring(1, {
+          damping: presets.noWobble.damping * 4,
+          stiffness: presets.noWobble.stiffness / 2
+        })
+      }}
+    >
+      {interpolatedStyle => connectDropTarget(
+        <div style={{...style, ...interpolatedStyle}}>
+          Trash
+          {loading && <Loader/>}
+        </div>
+      )}
+    </Motion>
   }
 }
 
@@ -40,4 +49,4 @@ const spec = {
 
 export default connect(state => ({
   loading: stateSelector(state).loading
-}), { deleteEvent })(DropTarget('event', spec, collect)(Trash))
+}), {deleteEvent})(DropTarget('event', spec, collect)(Trash))
