@@ -20,16 +20,21 @@ class Root extends Component {
     return (
       <div>
         {btn}
-        <ProtectedRoute path="/admin" component={AdminPage} />
+        <ul>
+          <li><Link to="/admin">admin</Link></li>
+          <li><Link to="/people">people</Link></li>
+          <li><Link to="/events">events</Link></li>
+        </ul>
+        <CustomDragLayer/>
+        <ProtectedRoute path="/admin" component={AdminPage}/>
         <ProtectedRoute path="/people" component={PersonPage}/>
         <ProtectedRoute path="/events" component={EventsPage}/>
-        <Route path="/auth" component={AuthPage} />
-        <CustomDragLayer />
+        <Route path="/auth" component={AuthPage}/>
       </div>
     )
   }
 }
 
-export default connect(state=> ({
+export default connect(state => ({
   signedIn: !!state[moduleName].user
-}),{signOut}, null , {pure:false})(Root)
+}), {signOut}, null, {pure: false})(Root)
